@@ -189,15 +189,45 @@ namespace r47.Primitives.EnumT
 
         public static implicit operator int(EnumT<T> m) => m._value;
 
+        /// <summary>
+        /// Flag-Check: returns true if a and b share any common flag bit. Null operands are treated as 0 (no flags).
+        /// </summary>
         public static bool operator &(EnumT<T> a, EnumT<T> b)
         {
             var aNull = ReferenceEquals(a, null);
             var bNull = ReferenceEquals(b, null);
-            if (aNull && bNull) return true;
-
-            if (aNull ^ bNull) return false;
+            if (aNull || bNull) return false;
 
             return (a._value & b._value) != 0;
+        }
+
+        /// <summary>
+        /// Bitwise OR of two enum values. Null operands are treated as 0 (no flags). Returns the combined integer mask.
+        /// </summary>
+        public static int operator |(EnumT<T> a, EnumT<T> b)
+        {
+            var av = ReferenceEquals(a, null) ? 0 : a._value;
+            var bv = ReferenceEquals(b, null) ? 0 : b._value;
+            return av | bv;
+        }
+
+        /// <summary>
+        /// Bitwise NOT of the enum value. Null is treated as 0. Returns the complemented integer mask.
+        /// </summary>
+        public static int operator ~(EnumT<T> a)
+        {
+            var av = ReferenceEquals(a, null) ? 0 : a._value;
+            return ~av;
+        }
+
+        /// <summary>
+        /// Checks whether this value contains all bits of the specified flag (subset check).
+        /// Mirrors the semantics of Enum.HasFlag.
+        /// </summary>
+        public bool HasFlag(EnumT<T> flag)
+        {
+            if (ReferenceEquals(flag, null)) return false;
+            return (this._value & flag._value) == flag._value;
         }
 
         public static bool operator ==(EnumT<T> a, EnumT<T> b)
