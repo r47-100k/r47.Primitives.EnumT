@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace r47.Primitives.EnumT
 {
@@ -22,26 +23,14 @@ namespace r47.Primitives.EnumT
         private static T _default;
 
         /// <summary>
-        /// das ist ein statischer ctor() der VOR irgendeinem anderen ctor() im program aufgerufen wird. 
-        /// zu diesem zeitpunkt kann es aber sein, dass die klasse T noch nicht konstruiert ist. 
-        /// das führt zu einer exception!
-        /// 
-        /// daher muss man die klasse t selbst initialisieren. der aufruf eines beliebigen statischen feldes erzwingt die 
-        /// initialisierung
+        /// Statischer Konstruktor: stellt sicher, dass der konkrete Typ T initialisiert wird,
+        /// damit dessen statische Felder (die Enum-Einträge) konstruiert werden.
         /// </summary>
         static EnumT()
         {
             if (Items.Count != 0) return;
-            
-            //wenn keine statischen felder definiert sind -> exception, ansonsten ...
-            FieldInfo[] fields = typeof(T).GetFields(BindingFlags.Static | BindingFlags.Public);
-            if (fields.Length == 0)
-            {
-                throw new Exception("No Public Static Field defined in Enum class");
-            }
-
-            //...rufe irgendein statische feld auf
-            fields[0].GetValue(null);
+            // Erzwingt deterministisch die Ausführung des Type Initializers von T, ohne Reflection-Tricks
+            RuntimeHelpers.RunClassConstructor(typeof(T).TypeHandle);
         }
 
         protected EnumT(string name, bool isVisible = true)
