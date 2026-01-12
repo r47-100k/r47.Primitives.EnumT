@@ -88,6 +88,8 @@ public sealed class FilePerm : EnumT<FilePerm>
     public static readonly FilePerm Read  = new("Read",  0b0001);
     public static readonly FilePerm Write = new("Write", 0b0010);
     public static readonly FilePerm Exec  = new("Exec",  0b0100);
+    public static readonly FilePerm ReadWrite  = 
+        new(nameof(FilePerm.ReadWrite),  Read.Value | Write.Value);
 }
 
 int mask = FilePerm.Read | FilePerm.Write;      // 0b0011
