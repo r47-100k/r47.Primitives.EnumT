@@ -20,6 +20,9 @@ namespace r47.Primitives.EnumT
         protected static readonly List<T> Items = new List<T>();
         private static readonly object ItemsLock = new object();
         private static volatile T _default;
+        // Track used values and indices to enforce uniqueness and prevent duplicates
+        private static readonly HashSet<int> UsedValues = new HashSet<int>();
+        private static readonly HashSet<int> UsedIndices = new HashSet<int>();
 
         /// <summary>
         /// Statischer Konstruktor: stellt sicher, dass der konkrete Typ T initialisiert wird,
@@ -64,14 +67,34 @@ namespace r47.Primitives.EnumT
             // Ensure atomic numbering and registration under concurrency
             lock (ItemsLock)
             {
-                _value = value ?? GetNextValue();
-                _index = index ?? GetNextIndex();
+                // Determine next value/index
+                var newValue = value ?? GetNextValue();
+                var newIndex = index ?? GetNextIndex();
+
+                // Enforce uniqueness for explicitly provided values/indices
+                if (value.HasValue && UsedValues.Contains(value.Value)) throw new InvalidOperationException($"Duplicate enum Value detected for type {typeof(T).Name}: {value.Value}");
+
+                if (index.HasValue && UsedIndices.Contains(index.Value)) throw new InvalidOperationException($"Duplicate enum Index detected for type {typeof(T).Name}: {index.Value}");
+
+                // Protect against accidental collisions for auto-numbering
+                while (UsedValues.Contains(newValue))
+                {
+                    if (newValue == int.MaxValue) throw new InvalidOperationException($"No available Value left for type {typeof(T).Name}");
+                    newValue++;
+                }
+                while (UsedIndices.Contains(newIndex))
+                {
+                    if (newIndex == int.MaxValue) throw new InvalidOperationException($"No available Index left for type {typeof(T).Name}");
+                    newIndex++;
+                }
+
+                _value = newValue;
+                _index = newIndex;
                 _oid = oid ?? Guid.NewGuid();
                 _isVisible = isVisible;
 
-                // cast into T does not crash if T is also the type of the concrete generic class :
-                // OK     -> public class C : ToEnumBase<C>
-                // NOT OK -> public class D : ToEnumBase<C>
+                UsedValues.Add(_value);
+                UsedIndices.Add(_index);
                 Items.Add((T)this);
             }
         }
@@ -96,7 +119,17 @@ namespace r47.Primitives.EnumT
                         v = n._value;
                     }
                 }
-                return v + 1;
+                // Next candidate greater than current max
+                long candidate = (long)v + 1;
+                if (candidate > int.MaxValue) throw new InvalidOperationException($"No available Value left for type {typeof(T).Name}");
+
+                int c = (int)candidate;
+                while (UsedValues.Contains(c))
+                {
+                    if (c == int.MaxValue) throw new InvalidOperationException($"No available Value left for type {typeof(T).Name}");
+                    c++;
+                }
+                return c;
             }
         }
 
@@ -117,7 +150,18 @@ namespace r47.Primitives.EnumT
                         v = n._index;
                     }
                 }
-                return v + 1;
+                long candidate = (long)v + 1;
+                if (candidate > int.MaxValue)
+                    throw new InvalidOperationException($"No available Index left for type {typeof(T).Name}");
+
+                int c = (int)candidate;
+                while (UsedIndices.Contains(c))
+                {
+                    if (c == int.MaxValue)
+                        throw new InvalidOperationException($"No available Index left for type {typeof(T).Name}");
+                    c++;
+                }
+                return c;
             }
         }
 
