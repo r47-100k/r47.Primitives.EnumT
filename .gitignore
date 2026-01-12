@@ -382,3 +382,13 @@ FodyWeavers.xsd
 # Git needs an escaped backslash to match a real backslash in file/dir names
 .\\packages/
 .\\packages/**
+
+# Generic: ignore any accidentally created Windows-styled directories on Linux
+# These are literal directory names that contain a backslash ("\\"), e.g. ".\\bin", "lib\\net8.0"
+# Gitignore treats backslash as an escape, so use "\\" to match a single backslash in names.
+# 1) Any directory starting with ".\\" anywhere in the repo (e.g., .\\packages, .\\bin, .\\obj)
+.\\*/
+.\\*/**
+# 2) Any directory whose name contains a backslash anywhere
+**/*\\*/
+**/*\\*/**
