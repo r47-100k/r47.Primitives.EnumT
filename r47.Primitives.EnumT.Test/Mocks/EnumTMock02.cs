@@ -3,8 +3,6 @@
 
     public class EnumTMock02 : EnumT<EnumTMock02>
     {
-        #region <-- ctor -->
-
         public EnumTMock02(string name, bool isVisible = true)
             : base(name, isVisible)
         {
@@ -14,9 +12,6 @@
             : base(name, value, index, isVisible)
         {
         }
-
-
-        #endregion
 
         static EnumTMock02()
         {

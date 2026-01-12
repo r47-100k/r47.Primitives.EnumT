@@ -3,12 +3,7 @@
 
     public class EnumTMock00 : EnumT<EnumTMock00>
     {
-        #region <-- ctor -->
-        private EnumTMock00(string name)
-            : base(name)
-        {
-        }
-        #endregion
+        private EnumTMock00(string name) : base(name) { }
 
         //no defined values
     }
