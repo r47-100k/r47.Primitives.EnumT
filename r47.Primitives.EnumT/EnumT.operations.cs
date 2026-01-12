@@ -20,9 +20,10 @@ namespace r47.Primitives.EnumT
         }
 
         /// <summary>
-        /// liefert eine geclonte Liste aller Einträge des enums
+        /// Returns a cloned list of all entries as plain data objects.
+        /// Useful when you need a detached, serializable view.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A list of cloned entries as <see cref="IEnumT"/>.</returns>
         public static IEnumerable<IEnumT> ClonedEntries()
         {
             List<T> snapshot;
@@ -37,9 +38,9 @@ namespace r47.Primitives.EnumT
         }
 
         /// <summary>
-        /// sortiert die enum liste nach dem sortierschlüssel = index. Alle Elemente werden aufgenommen
+        /// Returns all entries sorted by <see cref="EnumT{T}.Index"/>.
         /// </summary>
-        /// <returns>sortierte enum liste</returns>
+        /// <returns>Sorted entries.</returns>
         public static IEnumerable<T> SortEntries()
         {
             List<T> retval;
@@ -52,9 +53,9 @@ namespace r47.Primitives.EnumT
         }
 
         /// <summary>
-        /// sortiert die enum liste nach dem sortierschlüssel = index. Elemente mit isVisible=false werden nicht mit aufgenommen
+        /// Returns only visible entries sorted by <see cref="EnumT{T}.Index"/>.
         /// </summary>
-        /// <returns>sortierte enum liste</returns>
+        /// <returns>Sorted visible entries.</returns>
         public static IEnumerable<T> SortVisibleEntries()
         {
             List<T> retval;
@@ -67,11 +68,11 @@ namespace r47.Primitives.EnumT
         }
 
         /// <summary>
-        /// Versucht, einen Eintrag mittels OID zu finden, ohne eine Ausnahme zu werfen.
+        /// Tries to find an entry by its <see cref="EnumT{T}.Oid"/> without throwing exceptions.
         /// </summary>
-        /// <param name="oid">Die OID des gesuchten Eintrags.</param>
-        /// <param name="result">Gibt bei Erfolg den gefundenen Eintrag zurück, andernfalls <c>null</c>.</param>
-        /// <returns><c>true</c>, wenn ein Eintrag mit der OID gefunden wurde; andernfalls <c>false</c>.</returns>
+        /// <param name="oid">The OID to look up.</param>
+        /// <param name="result">The found entry or <c>null</c>.</param>
+        /// <returns><c>true</c> if an entry with the given OID exists; otherwise <c>false</c>.</returns>
         public static bool TryFind(Guid oid, out T result)
         {
             lock (ItemsLock)
@@ -82,11 +83,11 @@ namespace r47.Primitives.EnumT
         }
 
         /// <summary>
-        /// Liefert den Eintrag mit dem angegebenen numerischen Wert. Wirft eine Ausnahme, wenn nicht gefunden.
+        /// Returns the entry with the specified numeric <c>Value</c> or throws if missing.
         /// </summary>
-        /// <param name="value">Der numerische <c>Value</c> des gesuchten Eintrags.</param>
-        /// <returns>Der gefundene Eintrag.</returns>
-        /// <exception cref="KeyNotFoundException">Wenn kein Eintrag mit diesem Wert existiert.</exception>
+        /// <param name="value">The numeric value to look up.</param>
+        /// <returns>The found entry.</returns>
+        /// <exception cref="KeyNotFoundException">Thrown when no entry with the given value exists.</exception>
         public static T FromValue(int value)
         {
             lock (ItemsLock)
@@ -101,11 +102,11 @@ namespace r47.Primitives.EnumT
         }
 
         /// <summary>
-        /// Versucht, einen Eintrag anhand seines numerischen Wertes zu finden.
+        /// Tries to find an entry by its numeric <c>Value</c>.
         /// </summary>
-        /// <param name="value">Der numerische <c>Value</c>.</param>
-        /// <param name="result">Der gefundene Eintrag oder <c>null</c>.</param>
-        /// <returns><c>true</c>, wenn ein Eintrag gefunden wurde; andernfalls <c>false</c>.</returns>
+        /// <param name="value">The numeric value.</param>
+        /// <param name="result">The found entry or <c>null</c>.</param>
+        /// <returns><c>true</c> if an entry is found; otherwise <c>false</c>.</returns>
         public static bool TryFromValue(int value, out T result)
         {
             lock (ItemsLock)
@@ -116,15 +117,15 @@ namespace r47.Primitives.EnumT
         }
 
         /// <summary>
-        /// Liefert den Eintrag mit dem angegebenen Text.
-        /// Standardmäßig wird <see cref="StringComparison.Ordinal"/> verwendet.
+        /// Returns the entry with the specified <see cref="EnumT{T}.Text"/>.
+        /// Uses <see cref="StringComparison.Ordinal"/> by default.
         /// </summary>
-        /// <param name="text">Der anzuzeigende Text des Eintrags.</param>
-        /// <param name="comparison">Die String-Vergleichsoption.</param>
-        /// <returns>Der gefundene Eintrag.</returns>
-        /// <exception cref="ArgumentNullException">Wenn <paramref name="text"/> <c>null</c> ist.</exception>
-        /// <exception cref="ArgumentException">Wenn <paramref name="text"/> leer oder nur aus Leerzeichen besteht.</exception>
-        /// <exception cref="KeyNotFoundException">Wenn kein Eintrag mit diesem Text existiert.</exception>
+        /// <param name="text">The display text to match.</param>
+        /// <param name="comparison">The string comparison option.</param>
+        /// <returns>The found entry.</returns>
+        /// <exception cref="ArgumentNullException">If <paramref name="text"/> is <c>null</c>.</exception>
+        /// <exception cref="ArgumentException">If <paramref name="text"/> is empty or whitespace.</exception>
+        /// <exception cref="KeyNotFoundException">If no entry with this text exists.</exception>
         public static T FromText(string text, StringComparison comparison = StringComparison.Ordinal)
         {
             if (text == null) throw new ArgumentNullException(nameof(text));
@@ -142,21 +143,22 @@ namespace r47.Primitives.EnumT
         }
 
         /// <summary>
-        /// Versucht, einen Eintrag anhand seines Textes zu finden. Standardmäßig wird <see cref="StringComparison.OrdinalIgnoreCase"/> verwendet.
+        /// Tries to find an entry by its <see cref="EnumT{T}.Text"/>.
+        /// Defaults to <see cref="StringComparison.OrdinalIgnoreCase"/>.
         /// </summary>
-        /// <param name="text">Der Text.</param>
-        /// <param name="result">Der gefundene Eintrag oder <c>null</c>.</param>
-        /// <returns><c>true</c>, wenn ein Eintrag gefunden wurde; andernfalls <c>false</c>.</returns>
+        /// <param name="text">The display text.</param>
+        /// <param name="result">The found entry or <c>null</c>.</param>
+        /// <returns><c>true</c> if an entry is found; otherwise <c>false</c>.</returns>
         public static bool TryFromText(string text, out T result)
             => TryFromText(text, StringComparison.OrdinalIgnoreCase, out result);
 
         /// <summary>
-        /// Versucht, einen Eintrag anhand seines Textes zu finden, mit frei wählbarer Vergleichsoption.
+        /// Tries to find an entry by its <see cref="EnumT{T}.Text"/> using the specified comparison.
         /// </summary>
-        /// <param name="text">Der Text.</param>
-        /// <param name="comparison">String-Vergleichsoption.</param>
-        /// <param name="result">Der gefundene Eintrag oder <c>null</c>.</param>
-        /// <returns><c>true</c>, wenn ein Eintrag gefunden wurde; andernfalls <c>false</c>.</returns>
+        /// <param name="text">The display text.</param>
+        /// <param name="comparison">The string comparison option.</param>
+        /// <param name="result">The found entry or <c>null</c>.</param>
+        /// <returns><c>true</c> if an entry is found; otherwise <c>false</c>.</returns>
         public static bool TryFromText(string text, StringComparison comparison, out T result)
         {
             result = null;
@@ -177,23 +179,23 @@ namespace r47.Primitives.EnumT
         }
 
         /// <summary>
-        /// Versucht, einen Eintrag aus einer String-Repräsentation zu lesen.
-        /// Reihenfolge: GUID (OID) -> int (Value) -> Text (case-insensitive standard).
+        /// Tries to parse an entry from a string.
+        /// Order: GUID (OID) → int (Value) → Text (case-insensitive default).
         /// </summary>
-        /// <param name="input">Die Eingabe.</param>
-        /// <param name="result">Der gefundene Eintrag oder <c>null</c>.</param>
-        /// <returns><c>true</c>, wenn das Parsen erfolgreich war; andernfalls <c>false</c>.</returns>
+        /// <param name="input">The input string.</param>
+        /// <param name="result">The found entry or <c>null</c>.</param>
+        /// <returns><c>true</c> if parsing succeeded; otherwise <c>false</c>.</returns>
         public static bool TryParse(string input, out T result)
             => TryParse(input, StringComparison.OrdinalIgnoreCase, out result);
 
         /// <summary>
-        /// Versucht, einen Eintrag aus einer String-Repräsentation zu lesen.
-        /// Reihenfolge: GUID (OID) -> int (Value) -> Text (mit angegebener Vergleichsoption).
+        /// Tries to parse an entry from a string using the specified text comparison.
+        /// Order: GUID (OID) → int (Value) → Text.
         /// </summary>
-        /// <param name="input">Die Eingabe.</param>
-        /// <param name="comparison">String-Vergleichsoption für Textvergleich.</param>
-        /// <param name="result">Der gefundene Eintrag oder <c>null</c>.</param>
-        /// <returns><c>true</c>, wenn das Parsen erfolgreich war; andernfalls <c>false</c>.</returns>
+        /// <param name="input">The input string.</param>
+        /// <param name="comparison">The string comparison for the text step.</param>
+        /// <param name="result">The found entry or <c>null</c>.</param>
+        /// <returns><c>true</c> if parsing succeeded; otherwise <c>false</c>.</returns>
         public static bool TryParse(string input, StringComparison comparison, out T result)
         {
             result = null;
