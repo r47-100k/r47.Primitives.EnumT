@@ -75,5 +75,147 @@ namespace r47.Primitives.EnumT
             result = null;
             return false;
         }
+
+        /// <summary>
+        /// Liefert den Eintrag mit dem angegebenen numerischen Wert. Wirft eine Ausnahme, wenn nicht gefunden.
+        /// </summary>
+        /// <param name="value">Der numerische <c>Value</c> des gesuchten Eintrags.</param>
+        /// <returns>Der gefundene Eintrag.</returns>
+        /// <exception cref="KeyNotFoundException">Wenn kein Eintrag mit diesem Wert existiert.</exception>
+        public static T FromValue(int value)
+        {
+            lock (ItemsLock)
+            {
+                foreach (var n in Items)
+                {
+                    if (n._value == value)
+                        return n;
+                }
+            }
+            throw new KeyNotFoundException($"No {typeof(T).Name} value with Value={value} was found.");
+        }
+
+        /// <summary>
+        /// Versucht, einen Eintrag anhand seines numerischen Wertes zu finden.
+        /// </summary>
+        /// <param name="value">Der numerische <c>Value</c>.</param>
+        /// <param name="result">Der gefundene Eintrag oder <c>null</c>.</param>
+        /// <returns><c>true</c>, wenn ein Eintrag gefunden wurde; andernfalls <c>false</c>.</returns>
+        public static bool TryFromValue(int value, out T result)
+        {
+            lock (ItemsLock)
+            {
+                foreach (var n in Items)
+                {
+                    if (n._value == value)
+                    {
+                        result = n;
+                        return true;
+                    }
+                }
+            }
+            result = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Liefert den Eintrag mit dem angegebenen Text.
+        /// Standardmäßig wird <see cref="StringComparison.Ordinal"/> verwendet.
+        /// </summary>
+        /// <param name="text">Der anzuzeigende Text des Eintrags.</param>
+        /// <param name="comparison">Die String-Vergleichsoption.</param>
+        /// <returns>Der gefundene Eintrag.</returns>
+        /// <exception cref="ArgumentNullException">Wenn <paramref name="text"/> <c>null</c> ist.</exception>
+        /// <exception cref="ArgumentException">Wenn <paramref name="text"/> leer oder nur aus Leerzeichen besteht.</exception>
+        /// <exception cref="KeyNotFoundException">Wenn kein Eintrag mit diesem Text existiert.</exception>
+        public static T FromText(string text, StringComparison comparison = StringComparison.Ordinal)
+        {
+            if (text == null) throw new ArgumentNullException(nameof(text));
+            if (string.IsNullOrWhiteSpace(text)) throw new ArgumentException("Text must not be empty or whitespace.", nameof(text));
+
+            lock (ItemsLock)
+            {
+                foreach (var n in Items)
+                {
+                    if (string.Equals(n._text, text, comparison))
+                        return n;
+                }
+            }
+            throw new KeyNotFoundException($"No {typeof(T).Name} value with Text='{text}' was found (comparison: {comparison}).");
+        }
+
+        /// <summary>
+        /// Versucht, einen Eintrag anhand seines Textes zu finden. Standardmäßig wird <see cref="StringComparison.OrdinalIgnoreCase"/> verwendet.
+        /// </summary>
+        /// <param name="text">Der Text.</param>
+        /// <param name="result">Der gefundene Eintrag oder <c>null</c>.</param>
+        /// <returns><c>true</c>, wenn ein Eintrag gefunden wurde; andernfalls <c>false</c>.</returns>
+        public static bool TryFromText(string text, out T result)
+            => TryFromText(text, StringComparison.OrdinalIgnoreCase, out result);
+
+        /// <summary>
+        /// Versucht, einen Eintrag anhand seines Textes zu finden, mit frei wählbarer Vergleichsoption.
+        /// </summary>
+        /// <param name="text">Der Text.</param>
+        /// <param name="comparison">String-Vergleichsoption.</param>
+        /// <param name="result">Der gefundene Eintrag oder <c>null</c>.</param>
+        /// <returns><c>true</c>, wenn ein Eintrag gefunden wurde; andernfalls <c>false</c>.</returns>
+        public static bool TryFromText(string text, StringComparison comparison, out T result)
+        {
+            result = null;
+            if (string.IsNullOrWhiteSpace(text)) return false;
+
+            lock (ItemsLock)
+            {
+                foreach (var n in Items)
+                {
+                    if (string.Equals(n._text, text, comparison))
+                    {
+                        result = n;
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Versucht, einen Eintrag aus einer String-Repräsentation zu lesen.
+        /// Reihenfolge: GUID (OID) -> int (Value) -> Text (case-insensitive standard).
+        /// </summary>
+        /// <param name="input">Die Eingabe.</param>
+        /// <param name="result">Der gefundene Eintrag oder <c>null</c>.</param>
+        /// <returns><c>true</c>, wenn das Parsen erfolgreich war; andernfalls <c>false</c>.</returns>
+        public static bool TryParse(string input, out T result)
+            => TryParse(input, StringComparison.OrdinalIgnoreCase, out result);
+
+        /// <summary>
+        /// Versucht, einen Eintrag aus einer String-Repräsentation zu lesen.
+        /// Reihenfolge: GUID (OID) -> int (Value) -> Text (mit angegebener Vergleichsoption).
+        /// </summary>
+        /// <param name="input">Die Eingabe.</param>
+        /// <param name="comparison">String-Vergleichsoption für Textvergleich.</param>
+        /// <param name="result">Der gefundene Eintrag oder <c>null</c>.</param>
+        /// <returns><c>true</c>, wenn das Parsen erfolgreich war; andernfalls <c>false</c>.</returns>
+        public static bool TryParse(string input, StringComparison comparison, out T result)
+        {
+            result = null;
+            if (string.IsNullOrWhiteSpace(input)) return false;
+
+            // GUID (OID)
+            if (Guid.TryParse(input, out var oid))
+            {
+                if (TryFind(oid, out result)) return true;
+            }
+
+            // Integer Value
+            if (int.TryParse(input, out var intVal))
+            {
+                if (TryFromValue(intVal, out result)) return true;
+            }
+
+            // Text
+            return TryFromText(input, comparison, out result);
+        }
     }
 }
