@@ -54,20 +54,26 @@ namespace r47.Primitives.EnumT
         }
 
         /// <summary>
-        /// sucht einen eintrag mittels oid
+        /// Versucht, einen Eintrag mittels OID zu finden, ohne eine Ausnahme zu werfen.
         /// </summary>
-        /// <param text="oid"></param>
-        /// <returns></returns>
-        public static T Find(Guid oid)
+        /// <param name="oid">Die OID des gesuchten Eintrags.</param>
+        /// <param name="result">Gibt bei Erfolg den gefundenen Eintrag zurück, andernfalls <c>null</c>.</param>
+        /// <returns><c>true</c>, wenn ein Eintrag mit der OID gefunden wurde; andernfalls <c>false</c>.</returns>
+        public static bool TryFind(Guid oid, out T result)
         {
             lock (ItemsLock)
             {
                 foreach (var n in Items)
                 {
-                    if (n._oid == oid) return n;
+                    if (n._oid == oid)
+                    {
+                        result = n;
+                        return true;
+                    }
                 }
             }
-            throw new ArgumentException($"{oid} is not a member of this enum");
+            result = null;
+            return false;
         }
     }
 }
