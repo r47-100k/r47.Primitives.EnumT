@@ -76,17 +76,9 @@ namespace r47.Primitives.EnumT
         {
             lock (ItemsLock)
             {
-                foreach (var n in Items)
-                {
-                    if (n._oid == oid)
-                    {
-                        result = n;
-                        return true;
-                    }
-                }
+                result = Items.FirstOrDefault(n => n._oid == oid);
+                return result != null;
             }
-            result = null;
-            return false;
         }
 
         /// <summary>
@@ -118,17 +110,9 @@ namespace r47.Primitives.EnumT
         {
             lock (ItemsLock)
             {
-                foreach (var n in Items)
-                {
-                    if (n._value == value)
-                    {
-                        result = n;
-                        return true;
-                    }
-                }
+                result = Items.FirstOrDefault(n => n._value == value);
+                return result != null;
             }
-            result = null;
-            return false;
         }
 
         /// <summary>
