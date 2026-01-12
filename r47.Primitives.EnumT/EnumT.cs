@@ -129,7 +129,7 @@ namespace r47.Primitives.EnumT
         {
             get { return _text; }
         }
-        private string _text;
+        private readonly string _text;
 
         /// <summary>
         /// der eigentliche enum-wert
@@ -138,7 +138,7 @@ namespace r47.Primitives.EnumT
         {
             get { return _value; }
         }
-        private int _value;
+        private readonly int _value;
 
         /// <summary>
         /// index des eintrags innerhalb der liste (nützlich zB zum sortieren von einträgen in listboxen unabhängig vom value)
