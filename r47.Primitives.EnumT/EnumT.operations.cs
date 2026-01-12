@@ -7,6 +7,19 @@ namespace r47.Primitives.EnumT
     public abstract partial class EnumT<T>
     {
         /// <summary>
+        /// Provides a read-only snapshot of all registered entries.
+        /// The returned collection is a copy created under lock and cannot be modified by the caller.
+        /// Order corresponds to registration order.
+        /// </summary>
+        public static IReadOnlyList<T> Entries()
+        {
+            lock (ItemsLock)
+            {
+                return new List<T>(Items).AsReadOnly();
+            }
+        }
+
+        /// <summary>
         /// liefert eine geclonte Liste aller Einträge des enums
         /// </summary>
         /// <returns></returns>
