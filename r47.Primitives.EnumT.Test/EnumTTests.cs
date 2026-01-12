@@ -76,7 +76,7 @@ namespace r47.Primitives.EnumT.Test
         }
 
         [Fact]
-        public void Find()
+        public void TryFind()
         {
             // arrange
             var items = EnumTMock01.SortEntries();
@@ -84,7 +84,8 @@ namespace r47.Primitives.EnumT.Test
             // act & assert
             foreach (var n in items)
             {
-                EnumTMock01.Find(n.Oid).Text.Should().Be(n.Text);
+                EnumTMock01.TryFind(n.Oid, out var found).Should().BeTrue();
+                found.Text.Should().Be(n.Text);
             }
         }
     }
