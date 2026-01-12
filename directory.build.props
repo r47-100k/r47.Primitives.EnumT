@@ -1,0 +1,57 @@
+<Project>
+    <!-- The Directory.Build.props file includes all build-specific properties. Place it next to the .sln file. -->
+    
+    <!-- #################################################################################################################### -->
+    <!-- INCLUDE: Place this line in any upstream Directory.Build.props file to inherit the one above.
+    <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+    -->
+    <!-- #################################################################################################################### -->
+    
+    
+    <!-- #################################################################################################################### -->
+    <!-- MANDATORY: Common information including mandatory README.md-->
+    <PropertyGroup>
+        <Company>r47</Company>
+        <Product>r47 Framework</Product>
+        <Copyright>Copyright © stefan busch 2025</Copyright>
+        <RepositoryType>git</RepositoryType>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <LangVersion>default</LangVersion>
+    </PropertyGroup>
+    <!-- #################################################################################################################### -->
+
+
+    <!-- #################################################################################################################### -->
+    <!-- MANDATORY: Versioning information. Can be global like here or subfolder/project wise.-->
+    <PropertyGroup>
+        <VersionPrefix>6.0.3</VersionPrefix>
+        <AssemblyVersion>6.0.0.0</AssemblyVersion>
+        <FileVersion>6.0.0.0</FileVersion>
+        <IsPackable>true</IsPackable>
+    </PropertyGroup>
+    <!-- #################################################################################################################### -->
+    
+
+    <!-- #################################################################################################################### -->
+    <!-- RECOMMENDED: Make use of SourceLink functinality and provide sources along with symbol packages-->
+    <PropertyGroup>
+        <EnableSourceLink>true</EnableSourceLink>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedAllSources>true</EmbedAllSources>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="microsoft.sourcelink.gitea" Version="8.0.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+    <!-- #################################################################################################################### -->
+
+
+    <!-- #################################################################################################################### -->
+    <!-- OPTIONAL: Global README for each of the resulting package -->
+    <ItemGroup>
+        <None Include="../README.md" Pack="true" PackagePath=""/>
+    </ItemGroup>
+    <!-- #################################################################################################################### -->
+</Project>
