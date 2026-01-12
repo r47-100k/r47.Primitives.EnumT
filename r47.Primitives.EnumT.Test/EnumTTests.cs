@@ -46,26 +46,6 @@ namespace r47.Primitives.EnumT.Test
         }
 
         [Fact]
-        public void InitializeTests()
-        {
-            // arrange
-            var sut = EnumTMock01.Entry1;
-            var t1 = sut.Text;
-            var v1 = sut.Value;
-
-            // act
-            var t2 = Guid.NewGuid().ToString();
-            var v2 = 987654321;
-            sut.Initialize(t2, v2);
-
-            // assert
-            sut.Text.Should().Be(t2);
-            sut.Value.Should().Be(v2);
-            t1.Should().NotBe(t2);
-            v1.Should().NotBe(v2);
-        }
-
-        [Fact]
         public void SortEntries()
         {
             // arrange

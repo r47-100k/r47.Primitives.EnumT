@@ -77,29 +77,6 @@ namespace r47.Primitives.EnumT
         }
 
         /// <summary>
-        /// is used to change text/value during runtime.
-        /// Note:
-        /// this is dangerous! because clients may rely on a specific value. so use this only for initialization stuff
-        /// </summary>
-        /// <param name="newText">new value for the text property to be set</param>
-        /// <param name="newValue">new value for the value property to be set. if it is null the org value will remain unchanged</param>
-        public virtual void Initialize(string newText, int? newValue)
-        {
-            if (string.IsNullOrEmpty(newText) == false)
-            {
-                _text = newText;
-            }
-
-            if (newValue.HasValue)
-            {
-                lock (ItemsLock)
-                {
-                    _value = newValue.Value;
-                }
-            }
-        }
-
-        /// <summary>
         /// funktionalität zur autonummerierung des wertes.
         /// durchsucht alle werte nach dem größtem value und liefert den nächsten "freien" value = highestValue +1
         /// 
