@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{05244B7A-D5B3-4F2F-AE3B-88683CC6D3A2}") = "r47.Primitives.EnumT", "r47.Primitives.EnumT\r47.Primitives.EnumT.csproj", "{0616CD0D-9D10-460F-940B-EB473BEC9333}"
+EndProject
+Project("{05244B7A-D5B3-4F2F-AE3B-88683CC6D3A2}") = "r47.Primitives.EnumT.Test", "r47.Primitives.EnumT.Test\r47.Primitives.EnumT.Test.csproj", "{5C8CD461-3C0B-4E4E-A077-5C059FCDA4AF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0616CD0D-9D10-460F-940B-EB473BEC9333}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0616CD0D-9D10-460F-940B-EB473BEC9333}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0616CD0D-9D10-460F-940B-EB473BEC9333}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0616CD0D-9D10-460F-940B-EB473BEC9333}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C8CD461-3C0B-4E4E-A077-5C059FCDA4AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C8CD461-3C0B-4E4E-A077-5C059FCDA4AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C8CD461-3C0B-4E4E-A077-5C059FCDA4AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C8CD461-3C0B-4E4E-A077-5C059FCDA4AF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
