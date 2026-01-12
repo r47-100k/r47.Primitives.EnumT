@@ -20,7 +20,8 @@ namespace r47.Primitives.EnumT
     public abstract partial class EnumT<T> : IEnumT where T : EnumT<T>
     {
         protected static readonly List<T> Items = new List<T>();
-        private static T _default;
+        private static readonly object ItemsLock = new object();
+        private static volatile T _default;
 
         /// <summary>
         /// Statischer Konstruktor: stellt sicher, dass der konkrete Typ T initialisiert wird,
@@ -28,7 +29,6 @@ namespace r47.Primitives.EnumT
         /// </summary>
         static EnumT()
         {
-            if (Items.Count != 0) return;
             // Erzwingt deterministisch die Ausführung des Type Initializers von T, ohne Reflection-Tricks
             RuntimeHelpers.RunClassConstructor(typeof(T).TypeHandle);
         }
@@ -63,15 +63,19 @@ namespace r47.Primitives.EnumT
         protected EnumT(Guid? oid, string text, int? value, int? index, bool isVisible=true)
         {
             _text = text;
-            _value = value ?? GetNextValue();
-            _index = index ?? GetNextIndex();
-            _oid = oid ?? Guid.NewGuid();
-            _isVisible = isVisible;
+            // Ensure atomic numbering and registration under concurrency
+            lock (ItemsLock)
+            {
+                _value = value ?? GetNextValue();
+                _index = index ?? GetNextIndex();
+                _oid = oid ?? Guid.NewGuid();
+                _isVisible = isVisible;
 
-            // cast into T does not crash if T is also the type of the concrete generic class :
-            // OK     -> public class C : ToEnumBase<C>
-            // NOT OK -> public class D : ToEnumBase<C>
-            Items.Add((T)this);
+                // cast into T does not crash if T is also the type of the concrete generic class :
+                // OK     -> public class C : ToEnumBase<C>
+                // NOT OK -> public class D : ToEnumBase<C>
+                Items.Add((T)this);
+            }
         }
 
         /// <summary>
@@ -90,7 +94,10 @@ namespace r47.Primitives.EnumT
 
             if (newValue.HasValue)
             {
-                _value = newValue.Value;
+                lock (ItemsLock)
+                {
+                    _value = newValue.Value;
+                }
             }
         }
 
@@ -105,14 +112,17 @@ namespace r47.Primitives.EnumT
         private static int GetNextValue()
         {
             int v = int.MinValue;
-            foreach (var n in Items)
+            lock (ItemsLock)
             {
-                if (n._value > v)
+                foreach (var n in Items)
                 {
-                    v = n._value;
+                    if (n._value > v)
+                    {
+                        v = n._value;
+                    }
                 }
+                return v + 1;
             }
-            return v + 1;
         }
 
         /// <summary>
@@ -123,14 +133,17 @@ namespace r47.Primitives.EnumT
         private static int GetNextIndex()
         {
             int v = int.MinValue;
-            foreach (var n in Items)
+            lock (ItemsLock)
             {
-                if (n._index > v)
+                foreach (var n in Items)
                 {
-                    v = n._index;
+                    if (n._index > v)
+                    {
+                        v = n._index;
+                    }
                 }
+                return v + 1;
             }
-            return v + 1;
         }
 
         #region <-- properties -->

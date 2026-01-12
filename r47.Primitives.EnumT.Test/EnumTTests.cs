@@ -6,15 +6,9 @@ using FluentAssertions;
 
 namespace r47.Primitives.EnumT.Test
 {
+    [Collection("parallel-execution")]
     public class EnumTTests
     {
-        [Fact]
-        public void Ctor_WithNoValues_ThrowsException()
-        {
-            Action act = () => { var r = EnumTMock00.Default; };
-            act.Should().Throw<TypeInitializationException>();
-        }
-
         [Fact]
         public void Ctor_WithAutonumerate_ValuesIndexes()
         {

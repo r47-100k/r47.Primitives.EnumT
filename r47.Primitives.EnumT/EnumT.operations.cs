@@ -12,7 +12,15 @@ namespace r47.Primitives.EnumT
         /// <returns></returns>
         public static IEnumerable<IEnumT> ClonedEntries()
         {
-            return Items.Select(n => new EnumTCloneEntry(n.Text, n.Value, n.Index, n.Oid, n.IsVisible)).Cast<IEnumT>().ToList();
+            List<T> snapshot;
+            lock (ItemsLock)
+            {
+                snapshot = new List<T>(Items);
+            }
+            return snapshot
+                .Select(n => new EnumTCloneEntry(n.Text, n.Value, n.Index, n.Oid, n.IsVisible))
+                .Cast<IEnumT>()
+                .ToList();
         }
 
         /// <summary>
@@ -21,7 +29,11 @@ namespace r47.Primitives.EnumT
         /// <returns>sortierte enum liste</returns>
         public static IEnumerable<T> SortEntries()
         {
-            var retval = new List<T>(Items);
+            List<T> retval;
+            lock (ItemsLock)
+            {
+                retval = new List<T>(Items);
+            }
             retval.Sort((x, y) => x.Index.CompareTo(y.Index));
             return retval;
         }
@@ -32,7 +44,11 @@ namespace r47.Primitives.EnumT
         /// <returns>sortierte enum liste</returns>
         public static IEnumerable<T> SortVisibleEntries()
         {
-            var retval = Items.Where(n => n.IsVisible).ToList();
+            List<T> retval;
+            lock (ItemsLock)
+            {
+                retval = Items.Where(n => n.IsVisible).ToList();
+            }
             retval.Sort((x, y) => x.Index.CompareTo(y.Index));
             return retval;
         }
@@ -44,11 +60,13 @@ namespace r47.Primitives.EnumT
         /// <returns></returns>
         public static T Find(Guid oid)
         {
-            foreach (var n in Items)
+            lock (ItemsLock)
             {
-                if (n._oid == oid) return n;
+                foreach (var n in Items)
+                {
+                    if (n._oid == oid) return n;
+                }
             }
-
             throw new ArgumentException($"{oid} is not a member of this enum");
         }
     }
