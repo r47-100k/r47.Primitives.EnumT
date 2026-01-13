@@ -1,15 +1,15 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace r47.Primitives.EnumT
 {
-    /// <summary>
-    /// wird nur verwendet um einträge aus dem enum clonen zu können
-    /// </summary>
-    public class EnumTCloneEntry : IEnumT
+    /// <inheritdoc />
+    public class EnumEntry : IEnumEntry
     {
-        public EnumTCloneEntry(string name, int value, int index, Guid oid, bool isVisible)
+        [JsonConstructor]
+        public EnumEntry(string text, int value, int index, Guid oid, bool isVisible)
         {
-            _name = name;
+            _name = text;
             _value = value;
             _index = index;
             _oid = oid;

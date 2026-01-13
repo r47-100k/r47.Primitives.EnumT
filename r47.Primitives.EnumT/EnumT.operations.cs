@@ -23,8 +23,8 @@ namespace r47.Primitives.EnumT
         /// Returns a cloned list of all entries as plain data objects.
         /// Useful when you need a detached, serializable view.
         /// </summary>
-        /// <returns>A list of cloned entries as <see cref="IEnumT"/>.</returns>
-        public static IEnumerable<IEnumT> ClonedEntries()
+        /// <returns>A list of cloned entries as <see cref="IEnumEntry"/>.</returns>
+        public static IEnumerable<IEnumEntry> ClonedEntries()
         {
             List<T> snapshot;
             lock (ItemsLock)
@@ -32,8 +32,8 @@ namespace r47.Primitives.EnumT
                 snapshot = new List<T>(Items);
             }
             return snapshot
-                .Select(n => new EnumTCloneEntry(n.Text, n.Value, n.Index, n.Oid, n.IsVisible))
-                .Cast<IEnumT>()
+                .Select(n => new EnumEntry(n.Text, n.Value, n.Index, n.Oid, n.IsVisible))
+                .Cast<IEnumEntry>()
                 .ToList();
         }
 

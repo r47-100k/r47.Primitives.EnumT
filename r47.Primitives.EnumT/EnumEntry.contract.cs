@@ -5,7 +5,7 @@ namespace r47.Primitives.EnumT
     /// <summary>
     /// Public contract for an <c>EnumT</c> entry.
     /// </summary>
-    public interface IEnumT
+    public interface IEnumEntry
     {
         /// <summary>
         /// Human-readable display text of the entry.

@@ -14,7 +14,7 @@ namespace r47.Primitives.EnumT
     /// Values are implemented as singletons defined by derived types as static fields.
     /// </summary>
     /// <typeparam name="T">The concrete derived enumeration class.</typeparam>
-    public abstract partial class EnumT<T> : IEnumT where T : EnumT<T>
+    public abstract partial class EnumT<T> : IEnumEntry where T : EnumT<T>
     {
         protected static readonly List<T> Items = new List<T>();
         private static readonly object ItemsLock = new object();
@@ -161,62 +161,34 @@ namespace r47.Primitives.EnumT
         }
 
         #region <-- properties -->
-        /// <summary>
-        /// Human-readable display text of the entry (useful for UI lists).
-        /// </summary>
-        public string Text
-        {
-            get { return _text; }
-        }
+        /// <inheritdoc />
+        public string Text => _text;
         private readonly string _text;
 
-        /// <summary>
-        /// The numeric value of the entry.
-        /// </summary>
-        public int Value
-        {
-            get { return _value; }
-        }
+        /// <inheritdoc cref="_value" />
+        public int Value => _value;
         private readonly int _value;
 
-        /// <summary>
-        /// Sort key used for ordering entries independently from <see cref="Value"/>.
-        /// </summary>
-        public int Index
-        {
-            get { return _index; }
-        }
+        /// <inheritdoc />
+        public int Index => _index;
         private readonly int _index;
 
-        /// <summary>
-        /// Stable unique identifier (OID) of the entry.
-        /// </summary>
-        public Guid Oid
-        {
-            get { return _oid; }
-        }
+        /// <inheritdoc />
+        public Guid Oid => _oid;
         private readonly Guid _oid;
 
-        /// <summary>
-        /// Indicates whether this entry should appear in <see cref="EnumT{T}.SortVisibleEntries()"/> results.
-        /// Useful to hide technical values used only for calculations.
-        /// </summary>
-        public bool IsVisible
-        {
-            get { return _isVisible; }
-        }
+        /// <inheritdoc />
+        public bool IsVisible => _isVisible;
         private readonly bool _isVisible;
 
         /// <summary>
         /// Gets a value indicating whether this entry is the default entry for its type.
         /// </summary>
-        public bool IsDefault
-        {
-            get { return this == Default; }
-        }
+        public bool IsDefault => this == Default;
 
         /// <summary>
         /// Gets or sets the default entry for this type.
+        /// It provides a type-safe way to define and identify a "starting" or "fallback" value.
         /// </summary>
         public static T Default
         {
